@@ -1,17 +1,26 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import { useAppStore } from '../store/appStore';
+import HexGridCanvas from './HexGridCanvas';
 
 export default function Layout() {
-  const sidebarOpen = useAppStore((state) => state.sidebarOpen);
-
   return (
-    <div className="flex h-screen bg-neutral-900">
-      <Sidebar />
-      <div className="flex flex-1 flex-col overflow-hidden">
+    <div className="flex h-screen" style={{ background: '#f8fafc', position: 'relative' }}>
+      {/* Animated hex-grid background */}
+      <HexGridCanvas />
+
+      {/* Sidebar */}
+      <div style={{ position: 'relative', zIndex: 1, flexShrink: 0 }}>
+        <Sidebar />
+      </div>
+
+      {/* Main area */}
+      <div className="flex flex-1 flex-col overflow-hidden" style={{ position: 'relative', zIndex: 1 }}>
         <Header />
-        <main className="flex-1 overflow-auto bg-neutral-900 p-6">
+        <main
+          className="flex-1 overflow-auto p-6"
+          style={{ background: 'transparent' }}
+        >
           <Outlet />
         </main>
       </div>
