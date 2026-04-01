@@ -38,18 +38,111 @@ class IncidentStatus(str, enum.Enum):
 
 
 class User(Base):
-    """User account"""
+    """User account - privacy-first design"""
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
-    email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
+    extension_token = Column(String, unique=True, index=True, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
+    last_login = Column(DateTime, nullable=True)
 
     # Relationships
     incidents = relationship("Incident", back_populates="assignee")
+    traffic_events = relationship("TrafficEvent", back_populates="user")
+    behavioral_signals = relationship("BehavioralSignal", back_populates="user")
+    access_logs = relationship("AccessLog", back_populates="user")
+    ioc_hits = relationship("IOCHit", back_populates="user")
+    firewall_rules = relationship("FirewallRule", back_populates="user")
+
+
+class TrafficEvent(Base):
+    """Traffic events from extension"""
+    __tablename__ = "traffic_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    url = Column(String)
+    domain = Column(String, index=True)
+    threat_score = Column(Float, default=0.0)
+    classification = Column(String)  # benign, suspicious, malicious
+    source = Column(String)  # chrome_extension, simulator
+    blocked = Column(Boolean, default=False)
+    tab_id = Column(Integer, nullable=True)
+    timestamp = Column(DateTime, index=True, server_default=func.now())
+
+    # Relationships
+    user = relationship("User", back_populates="traffic_events")
+
+
+class BehavioralSignal(Base):
+    """Behavioral analysis signals"""
+    __tablename__ = "behavioral_signals"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    keystroke_timing_avg = Column(Float, nullable=True)
+    mouse_velocity_avg = Column(Float, nullable=True)
+    idle_time = Column(Float, nullable=True)
+    tab_focused = Column(Boolean, default=True)
+    copy_paste_detected = Column(Boolean, default=False)
+    risk_score = Column(Float, default=0.0)
+    timestamp = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    user = relationship("User", back_populates="behavioral_signals")
+
+
+class AccessLog(Base):
+    """Access control logs"""
+    __tablename__ = "access_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    resource = Column(String)
+    decision = Column(String)  # ALLOW, DENY, RESTRICT
+    risk_score = Column(Float, default=0.0)
+    reason = Column(String)
+    timestamp = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    user = relationship("User", back_populates="access_logs")
+
+
+class IOCHit(Base):
+    """Indicator of Compromise hits"""
+    __tablename__ = "ioc_hits"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    domain = Column(String, index=True)
+    ioc_type = Column(String)
+    confidence = Column(Float)
+    mitre_ttp = Column(String, nullable=True)
+    first_seen = Column(DateTime, server_default=func.now())
+    last_seen = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    hit_count = Column(Integer, default=1)
+
+    # Relationships
+    user = relationship("User", back_populates="ioc_hits")
+
+
+class FirewallRule(Base):
+    """User-defined firewall rules"""
+    __tablename__ = "firewall_rules"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    rule_name = Column(String)
+    action = Column(String)  # ALLOW, DENY
+    condition = Column(String)
+    priority = Column(Integer, default=0)
+    created_at = Column(DateTime, server_default=func.now())
+    last_triggered = Column(DateTime, nullable=True)
+
+    # Relationships
+    user = relationship("User", back_populates="firewall_rules")
 
 
 class TrafficFlow(Base):
@@ -99,15 +192,19 @@ class Incident(Base):
     __tablename__ = "incidents"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
     title = Column(String, index=True)
     description = Column(Text)
     status = Column(Enum(IncidentStatus), default=IncidentStatus.OPEN)
     severity = Column(Enum(ThreatSeverity), default=ThreatSeverity.MEDIUM)
+    threat_type = Column(String, nullable=True)
+    affected_domain = Column(String, nullable=True)
+    playbook_executed = Column(Boolean, default=False)
+    groq_narrative = Column(Text, nullable=True)
+    mitre_ttp = Column(String, nullable=True)
     created_at = Column(DateTime, index=True, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
-    assigned_to = Column(Integer, ForeignKey("users.id"))
-    remediation_steps = Column(JSON)  # Remediation steps as JSON array
-    soar_decision = Column(Text)  # Groq-powered SOAR decision
+    resolved_at = Column(DateTime, nullable=True)
+    remediation_steps = Column(JSON, nullable=True)
 
     # Relationships
     threats = relationship("Threat", secondary="incident_threats")

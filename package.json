@@ -1,0 +1,19 @@
+{
+  "name": "ai-ngfw",
+  "version": "1.0.0",
+  "description": "AI-powered Next-Generation Firewall with Chrome extension and React dashboard",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "preview": "cd frontend && npm run preview"
+  },
+  "workspaces": [
+    "frontend"
+  ],
+  "dependencies": {
+    "axios": "^1.14.0",
+    "react": "^19.2.4",
+    "react-router-dom": "^7.13.2",
+    "zustand": "^5.0.12"
+  }
+}

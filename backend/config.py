@@ -57,7 +57,7 @@ def get_allowed_origins() -> list:
     """Parse CORS allowed origins from environment"""
     origins_str = os.getenv(
         "ALLOWED_ORIGINS",
-        "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173"
+        "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173,chrome-extension://*"
     )
     return [origin.strip() for origin in origins_str.split(",")]
 

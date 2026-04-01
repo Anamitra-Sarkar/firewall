@@ -1,19 +1,21 @@
 import axios from 'axios';
+import { useAppStore } from '../store/appStore';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:7860/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:7860/api/v1';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,  // Include httpOnly cookies
 });
 
 // Add auth token to requests
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const state = useAppStore.getState();
+  if (state.accessToken) {
+    config.headers.Authorization = `Bearer ${state.accessToken}`;
   }
   return config;
 });
