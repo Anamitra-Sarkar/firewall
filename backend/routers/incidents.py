@@ -40,6 +40,24 @@ class IncidentUpdateRequest(BaseModel):
     remediation_steps: Optional[List[str]] = None
 
 
+class RequestAnalysisRequest(BaseModel):
+    url: str
+    domain: str
+    protocol: str
+    method: str = "GET"
+    timestamp: Optional[str] = None
+    tabId: Optional[int] = None
+    source: Optional[str] = None
+
+
+class RequestAnalysisResponse(BaseModel):
+    threat_score: float
+    threat_type: Optional[str] = None
+    is_threat: bool
+    reason: str
+    cached: bool = False
+
+
 @router.get("/", response_model=List[IncidentResponse])
 async def get_incidents(
     status: Optional[str] = Query(None),
@@ -116,3 +134,57 @@ async def resolve_incident(
         await db.commit()
     
     return {"status": "resolved"}
+
+
+@router.post("/analyze", response_model=RequestAnalysisResponse)
+async def analyze_request(
+    request: RequestAnalysisRequest,
+):
+    """
+    Analyze a request for threats (used by browser extension)
+    
+    This endpoint receives requests from the AI-NGFW browser extension
+    and returns a threat score and classification.
+    """
+    import random  # Placeholder for real threat analysis
+    
+    # Extract domain for analysis
+    domain = request.domain.lower()
+    
+    # Simple placeholder threat analysis logic
+    # In production, this would use:
+    # - ML models for threat scoring
+    # - IoC (Indicator of Compromise) databases
+    # - Behavioral signal analysis
+    # - Real-time threat intelligence feeds
+    
+    threat_indicators = {
+        'phishing': 0.0,
+        'malware': 0.0,
+        'suspicious': 0.0,
+    }
+    
+    # Check for common phishing patterns
+    phishing_keywords = ['login', 'verify', 'confirm', 'update', 'payment', 'urgent']
+    if any(keyword in domain for keyword in phishing_keywords):
+        threat_indicators['phishing'] += 0.2
+    
+    # Check protocol
+    if request.protocol != 'https:':
+        threat_indicators['suspicious'] += 0.15
+    
+    # Calculate overall threat score
+    threat_score = min(sum(threat_indicators.values()) / 3.0, 1.0)
+    
+    # Determine threat type
+    threat_type = None
+    if threat_score > 0.7:
+        threat_type = max(threat_indicators, key=threat_indicators.get)
+    
+    return RequestAnalysisResponse(
+        threat_score=threat_score,
+        threat_type=threat_type,
+        is_threat=threat_score > 0.7,
+        reason="Request analyzed" if threat_score <= 0.7 else f"Potential {threat_type}",
+        cached=False,
+    )

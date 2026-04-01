@@ -107,6 +107,15 @@ async def root():
 frontend_path = Path(__file__).parent.parent / "frontend" / "dist"
 
 
+@app.get("/landing")
+async def get_landing_page():
+    """Serve the landing page"""
+    landing_path = Path(__file__).parent.parent / "frontend" / "public" / "landing.html"
+    if landing_path.exists():
+        return FileResponse(landing_path, media_type="text/html")
+    return {"error": "Landing page not found"}, 404
+
+
 @app.get("/{file_path:path}")
 async def serve_frontend(file_path: str):
     """Serve frontend assets"""

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-NGFW - Next-Generation Firewall for Modern Browsing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+        }
+
+        body {
+            background: var(--primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass-effect {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in-left {
+            animation: slideInLeft 0.8s ease-out forwards;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .scale-in {
+            animation: scaleIn 0.8s ease-out forwards;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--accent-blue);
+        }
+
+        .feature-card {
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-4px);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: rgba(59, 130, 246, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .navbar {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-blue);
+        }
+
+        .hero-section {
+            padding: 120px 32px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: clamp(36px, 8vw, 72px);
+            font-weight: 700;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 80px;
+        }
+
+        .section {
+            padding: 80px 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 60px;
+            max-width: 800px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+        }
+
+        .demo-section {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 60px 32px;
+            text-align: center;
+        }
+
+        .demo-image {
+            width: 100%;
+            max-width: 600px;
+            margin: 40px auto 0;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--primary-light);
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .step-item {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 40px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .step-content p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .footer {
+            background: var(--primary-light);
+            border-top: 1px solid var(--border-color);
+            padding: 60px 32px 40px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-blue);
+        }
+
+        .footer-bottom {
+            color: var(--text-secondary);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 16px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+
+            .hero-section {
+                padding: 60px 16px;
+            }
+
+            .section {
+                padding: 60px 16px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .step-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">AI-NGFW</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#demo">Demo</a>
+            <a href="#docs">Docs</a>
+            <button class="btn-primary" style="padding: 10px 20px; font-size: 14px;">Add to Chrome</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div style="display: inline-block; margin-bottom: 24px;">
+            <span style="color: var(--accent-blue); font-size: 14px; font-weight: 600;">NEXT-GENERATION FIREWALL</span>
+        </div>
+        <h1 class="hero-title gradient-text fade-in">
+            AI-Powered Threat Protection for the Modern Web
+        </h1>
+        <p class="hero-subtitle fade-in" style="animation-delay: 0.2s;">
+            Block advanced threats in real-time with machine learning. Lightweight browser extension that keeps you safe without slowing you down.
+        </p>
+        <div class="hero-buttons fade-in" style="animation-delay: 0.4s;">
+            <button class="btn-primary">Add Extension to Chrome</button>
+            <button class="btn-secondary">Watch Demo (2 min)</button>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="section" style="text-align: center;">
+        <h2 class="section-title fade-in">Your Browser Is Vulnerable</h2>
+        <p class="section-subtitle fade-in" style="animation-delay: 0.2s;">
+            Traditional antivirus is outdated. New attacks happen in milliseconds, bypassing legacy defenses. You need intelligent, real-time protection.
+        </p>
+        <div class="features-grid fade-in" style="animation-delay: 0.4s;">
+            <div class="feature-card">
+                <div class="icon-box">⚡</div>
+                <h3 style="font-size: 20px; font-weight: 600; margin-bottom: 12px;">99.2% Detection Rate</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">AI model trained on millions of threat signatures</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-box">🔒</div>
+                <h3 style="font-size: 20px; font-weight: 600; margin-bottom: 12px;">Zero Data Collection</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">All analysis happens locally. Your privacy is untouched.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-box">⚙️</div>
+                <h3 style="font-size: 20px; font-weight: 600; margin-bottom: 12px;">Lightweight & Fast</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">&lt;5MB memory footprint. No performance impact.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <h2 class="section-title fade-in">Intelligent Threat Detection</h2>
+        <p class="section-subtitle fade-in" style="animation-delay: 0.2s;">
+            Advanced AI engine that learns from global threat patterns
+        </p>
+        <div class="bento-grid fade-in" style="animation-delay: 0.4s;">
+            <div class="feature-card">
+                <div class="icon-box">🎯</div>
+                <h3 style="font-weight: 600; margin-bottom: 8px;">Behavioral Analysis</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">Detects suspicious behavior before it causes harm</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-box">🔍</div>
+                <h3 style="font-weight: 600; margin-bottom: 8px;">Real-Time Scanning</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">Every request analyzed in milliseconds</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-box">🚀</div>
+                <h3 style="font-weight: 600; margin-bottom: 8px;">Smart Caching</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">Instant decisions on known threats</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-box">📊</div>
+                <h3 style="font-weight: 600; margin-bottom: 8px;">Threat Dashboard</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">See blocked threats in one place</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-box">🌐</div>
+                <h3 style="font-weight: 600; margin-bottom: 8px;">Global Threat Intel</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">Updated with latest attack signatures</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-box">⚙️</div>
+                <h3 style="font-weight: 600; margin-bottom: 8px;">Custom Rules</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">Create your own security policies</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="section" id="how-it-works">
+        <h2 class="section-title fade-in">How It Works</h2>
+        <p class="section-subtitle fade-in" style="animation-delay: 0.2s;">
+            Simple 3-step protection that runs silently in the background
+        </p>
+        
+        <div style="max-width: 700px; fade-in" style="animation-delay: 0.4s;">
+            <div class="step-item fade-in" style="animation-delay: 0.6s;">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Request Interception</h3>
+                    <p>Extension monitors all network requests made by your browser in real-time</p>
+                </div>
+            </div>
+
+            <div class="step-item fade-in" style="animation-delay: 0.8s;">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>AI Analysis</h3>
+                    <p>Advanced ML model analyzes request patterns, IoCs, and behavioral signals instantly</p>
+                </div>
+            </div>
+
+            <div class="step-item fade-in" style="animation-delay: 1s;">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Smart Decision</h3>
+                    <p>Block malicious requests or allow safe traffic. Badge updates show threat count.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="section" id="demo">
+        <div class="demo-section fade-in">
+            <h2 class="section-title" style="margin-bottom: 16px;">See It In Action</h2>
+            <p class="section-subtitle" style="margin-bottom: 0;">Watch how AI-NGFW identifies and blocks threats in real-time</p>
+            <div class="demo-image">
+                [Demo Video Placeholder - 30 second demo showing popup UI]
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section class="section" style="text-align: center;">
+        <h2 class="section-title fade-in">Get Started in 30 Seconds</h2>
+        <p class="section-subtitle fade-in" style="animation-delay: 0.2s; margin-bottom: 40px;">
+            One click to powerful protection
+        </p>
+        <button class="btn-primary fade-in" style="animation-delay: 0.4s; font-size: 16px; padding: 14px 32px;">
+            Add to Chrome Now
+        </button>
+        <p style="color: var(--text-secondary); margin-top: 24px; font-size: 14px;">
+            Requires Chrome 90+ | Works offline | No account needed
+        </p>
+    </section>
+
+    <!-- Documentation Section -->
+    <section class="section" id="docs" style="background: rgba(59, 130, 246, 0.05); margin-left: -32px; margin-right: -32px; padding-left: 32px; padding-right: 32px;">
+        <h2 class="section-title fade-in">Documentation</h2>
+        <div class="features-grid fade-in" style="animation-delay: 0.2s;">
+            <a href="#" class="feature-card" style="text-decoration: none; display: block;">
+                <h3 style="font-weight: 600; margin-bottom: 12px; color: var(--accent-blue);">Getting Started →</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">Installation guide and first steps</p>
+            </a>
+            <a href="#" class="feature-card" style="text-decoration: none; display: block;">
+                <h3 style="font-weight: 600; margin-bottom: 12px; color: var(--accent-blue);">API Reference →</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">Custom rules and configuration</p>
+            </a>
+            <a href="#" class="feature-card" style="text-decoration: none; display: block;">
+                <h3 style="font-weight: 600; margin-bottom: 12px; color: var(--accent-blue);">FAQ →</h3>
+                <p style="color: var(--text-secondary); font-size: 14px;">Common questions and troubleshooting</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div style="margin-bottom: 40px;">
+                <div class="logo" style="font-size: 28px; margin-bottom: 12px;">AI-NGFW</div>
+                <p style="color: var(--text-secondary); max-width: 400px; margin: 0 auto;">
+                    Next-generation firewall protection for the modern web.
+                </p>
+            </div>
+            <div class="footer-links">
+                <a href="#">GitHub</a>
+                <a href="#">Twitter</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+            <div class="footer-bottom">
+                © 2024 AI-NGFW. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in, .slide-in-left, .scale-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Button click handlers
+        document.querySelectorAll('.btn-primary').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // This will be replaced with actual Chrome Web Store URL
+                window.open('https://chrome.google.com/webstore', '_blank');
+            });
+        });
+    </script>
+</body>
+</html>
