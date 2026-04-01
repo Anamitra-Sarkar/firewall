@@ -12,7 +12,6 @@ from sqlalchemy import (
     Enum,
     ForeignKey,
     JSON,
-    ARRAY,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -84,7 +83,7 @@ class Threat(Base):
     threat_type = Column(String)  # malware, botnet, ddos, etc.
     description = Column(Text)
     indicators = Column(JSON)  # IOCs
-    mitre_techniques = Column(ARRAY(String))
+    mitre_techniques = Column(JSON)  # MITRE techniques as JSON array
     detected_at = Column(DateTime, index=True, server_default=func.now())
     confidence_score = Column(Float, default=0.0)
     traffic_flow_id = Column(Integer, ForeignKey("traffic_flows.id"))
@@ -107,7 +106,7 @@ class Incident(Base):
     created_at = Column(DateTime, index=True, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
     assigned_to = Column(Integer, ForeignKey("users.id"))
-    remediation_steps = Column(ARRAY(String))
+    remediation_steps = Column(JSON)  # Remediation steps as JSON array
     soar_decision = Column(Text)  # Groq-powered SOAR decision
 
     # Relationships

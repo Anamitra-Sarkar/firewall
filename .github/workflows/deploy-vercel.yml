@@ -1,0 +1,35 @@
+name: Deploy Frontend to Vercel
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          cd frontend
+          vercel deploy --prod \
+            --token=$VERCEL_TOKEN \
+            --projectId=$VERCEL_PROJECT_ID \
+            --org=$VERCEL_ORG_ID \
+            --env VITE_API_URL="https://ai-ngfw-backend.hf.space"
+
+      - name: Deployment Summary
+        run: |
+          echo "✅ Frontend deployed to Vercel"
+          echo "Frontend URL: https://your-app.vercel.app"

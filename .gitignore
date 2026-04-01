@@ -42,13 +42,10 @@ env/
 # Frontend
 frontend/node_modules/
 frontend/dist/
-frontend/.env.local
-frontend/.env.*.local
+# frontend/.env.local # Removed by Orchids to allow .env files
+# frontend/.env.*.local # Removed by Orchids to allow .env files
 
 # Environment
-.env
-.env.local
-.env.*.local
 
 # Logs
 logs/
@@ -64,3 +61,5 @@ Thumbs.db
 # Cache
 .cache/
 .eslintcache
+node_modules
+.venv

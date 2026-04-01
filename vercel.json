@@ -1,0 +1,29 @@
+{
+  "projectId": "0f7d19c2-edfe-42cc-97bf-8b2cfb7a2bc5",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "nodeVersion": "20.x",
+  "env": [
+    {
+      "key": "VITE_API_URL",
+      "value": "https://ai-ngfw-backend.hf.space"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://ai-ngfw-backend.hf.space/api/:path*"
+    }
+  ]
+}

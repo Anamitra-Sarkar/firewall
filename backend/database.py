@@ -17,7 +17,7 @@ from .config import settings
 # For production, use PostgreSQL with asyncpg
 if settings.database_url.startswith("sqlite"):
     engine = create_async_engine(
-        settings.database_url,
+        settings.database_url.replace("sqlite:///", "sqlite+aiosqlite:///"),
         echo=settings.database_echo,
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,

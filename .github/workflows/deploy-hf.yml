@@ -1,0 +1,47 @@
+name: Deploy to HuggingFace Spaces
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up git
+        run: |
+          git config --global user.email "ci@huggingface.com"
+          git config --global user.name "HF CI Bot"
+
+      - name: Push to HuggingFace Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE_REPO: ${{ secrets.HF_SPACE_REPO }}
+        run: |
+          # Clone the HuggingFace space repo
+          git clone https://huggingface.co/spaces/${HF_SPACE_REPO} hf-space
+          cd hf-space
+          
+          # Copy backend files
+          rm -rf backend pyproject.toml Dockerfile.hf
+          cp -r ../backend ./
+          cp ../pyproject.toml ./
+          cp ../Dockerfile.hf ./Dockerfile
+          
+          # Commit and push changes
+          git add -A
+          git commit -m "chore: auto-sync from GitHub ($(date +%Y-%m-%d))" || echo "No changes to commit"
+          git push https://user:${HF_TOKEN}@huggingface.co/spaces/${HF_SPACE_REPO} main
+
+      - name: Notify deployment
+        if: always()
+        run: |
+          echo "Deployment to HuggingFace Spaces completed"
+          echo "Space URL: https://huggingface.co/spaces/${{ secrets.HF_SPACE_REPO }}"

@@ -9,7 +9,7 @@ import os
 import logging
 from pathlib import Path
 
-from .config import settings
+from .config import settings, allowed_origins
 from .database import init_db, close_db
 from .routers import (
     auth,
@@ -57,7 +57,7 @@ app = FastAPI(
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins,
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
