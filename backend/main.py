@@ -22,6 +22,7 @@ from .routers import (
     analytics,
     ai_chat,
     health,
+    extension,
 )
 from .services.ws_manager import ConnectionManager
 
@@ -63,20 +64,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
-app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
-app.include_router(traffic.router, prefix="/api/traffic", tags=["Traffic Analysis"])
-app.include_router(threats.router, prefix="/api/threats", tags=["Threat Intelligence"])
-app.include_router(incidents.router, prefix="/api/incidents", tags=["Incident Response"])
-app.include_router(ztna.router, prefix="/api/ztna", tags=["Zero Trust"])
+# Include routers with /api/v1 prefix
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
+app.include_router(traffic.router, prefix="/api/v1/traffic", tags=["Traffic Analysis"])
+app.include_router(threats.router, prefix="/api/v1/threats", tags=["Threat Intelligence"])
+app.include_router(incidents.router, prefix="/api/v1/incidents", tags=["Incident Response"])
+app.include_router(ztna.router, prefix="/api/v1/ztna", tags=["Zero Trust"])
 app.include_router(
     federated_learning.router,
-    prefix="/api/federated",
+    prefix="/api/v1/federated",
     tags=["Federated Learning"],
 )
-app.include_router(rules.router, prefix="/api/rules", tags=["Policy Rules"])
-app.include_router(analytics.router, prefix="/api/analytics", tags=["Analytics"])
-app.include_router(ai_chat.router, prefix="/api/ai", tags=["AI Chat"])
+app.include_router(rules.router, prefix="/api/v1/rules", tags=["Policy Rules"])
+app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytics"])
+app.include_router(ai_chat.router, prefix="/api/v1/ai", tags=["AI Chat"])
+app.include_router(extension.router, prefix="/api/v1/extension", tags=["Extension"])
 app.include_router(health.router, tags=["Health"])
 
 

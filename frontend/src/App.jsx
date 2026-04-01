@@ -8,6 +8,8 @@ import Analytics from './pages/Analytics';
 import ZeroTrust from './pages/ZeroTrust';
 import Rules from './pages/Rules';
 import Login from './pages/Login';
+import Register from './pages/Register';
+import Landing from './pages/Landing';
 import './index.css';
 
 function App() {
@@ -16,12 +18,17 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/landing" element={<Landing />} />
         <Route
           path="/login"
-          element={isAuthenticated ? <Navigate to="/" /> : <Login />}
+          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />}
         />
         <Route
-          path="/"
+          path="/register"
+          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Register />}
+        />
+        <Route
+          path="/dashboard"
           element={isAuthenticated ? <Layout /> : <Navigate to="/login" />}
         >
           <Route index element={<Dashboard />} />
@@ -31,6 +38,7 @@ function App() {
           <Route path="zero-trust" element={<ZeroTrust />} />
           <Route path="rules" element={<Rules />} />
         </Route>
+        <Route path="/" element={<Landing />} />
       </Routes>
     </BrowserRouter>
   );

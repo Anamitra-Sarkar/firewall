@@ -1,17 +1,32 @@
 import { create } from 'zustand';
 
 export const useAppStore = create((set) => ({
-  // Auth state
-  isAuthenticated: !!localStorage.getItem('auth_token'),
+  // Auth state - store in memory, NOT localStorage (security best practice)
+  isAuthenticated: false,
   user: null,
-  login: (token, user) => {
-    localStorage.setItem('auth_token', token);
-    set({ isAuthenticated: true, user });
+  accessToken: null,
+  extensionToken: null,
+  
+  login: (token, user, extensionToken) => {
+    set({ 
+      isAuthenticated: true, 
+      user,
+      accessToken: token,
+      extensionToken: extensionToken || null
+    });
   },
+  
   logout: () => {
-    localStorage.removeItem('auth_token');
-    set({ isAuthenticated: false, user: null });
+    set({ 
+      isAuthenticated: false, 
+      user: null,
+      accessToken: null,
+      extensionToken: null 
+    });
   },
+  
+  setAccessToken: (token) => set({ accessToken: token }),
+  setExtensionToken: (token) => set({ extensionToken: token }),
 
   // Threats
   threats: [],
