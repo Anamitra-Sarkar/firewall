@@ -1,25 +1,21 @@
-# Multi-stage build: Frontend
-FROM node:20-alpine AS frontend-build
+# Multi-stage build: Frontend (Bun)
+FROM oven/bun:1 AS frontend-build
 
 WORKDIR /app/frontend
 
 # Copy frontend package files
-COPY frontend/package.json frontend/pnpm-lock.yaml* frontend/yarn.lock* frontend/package-lock.json* ./
+COPY frontend/package.json frontend/bun.lock ./
 
-# Install dependencies (support multiple package managers)
-RUN if [ -f pnpm-lock.yaml ]; then npm install -g pnpm && pnpm install; \
-    elif [ -f yarn.lock ]; then yarn install; \
-    else npm install; fi
+# Install dependencies using Bun
+RUN bun install --frozen-lockfile
 
 # Copy frontend source
 COPY frontend/src ./src
 COPY frontend/public ./public
 COPY frontend/index.html frontend/vite.config.js frontend/tailwind.config.js frontend/postcss.config.js ./
 
-# Build frontend
-RUN if [ -f pnpm-lock.yaml ]; then pnpm run build; \
-    elif [ -f yarn.lock ]; then yarn build; \
-    else npm run build; fi
+# Build frontend with Bun
+RUN bun run build
 
 # Main stage: Python Backend
 FROM python:3.11-slim
