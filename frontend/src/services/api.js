@@ -1,7 +1,11 @@
 import axios from 'axios';
 import { useAppStore } from '../store/appStore';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:7860/api/v1';
+// Ensure base URL always ends with /api/v1
+const rawUrl = import.meta.env.VITE_API_URL || 'http://localhost:7860';
+const API_BASE_URL = rawUrl.endsWith('/api/v1')
+  ? rawUrl
+  : rawUrl.replace(/\/$/, '') + '/api/v1';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
