@@ -1,14 +1,16 @@
 {
-  "rootDirectory": "frontend",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "bun run build",
   "installCommand": "bun install",
-  "outputDirectory": "dist",
-  "framework": "vite",
-  "nodeVersion": "20.x",
-  "env": [
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
     {
-      "key": "VITE_API_URL",
-      "value": "https://ai-ngfw-backend.hf.space"
+      "source": "/api/:path*",
+      "destination": "https://ai-ngfw-backend.hf.space/api/:path*"
+    },
+    {
+      "source": "/((?!api/.*).*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -20,16 +22,6 @@
           "value": "public, max-age=3600, must-revalidate"
         }
       ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://ai-ngfw-backend.hf.space/api/:path*"
-    },
-    {
-      "source": "/((?!api/.*).*)",
-      "destination": "/index.html"
     }
   ]
 }
