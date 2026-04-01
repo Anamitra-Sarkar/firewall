@@ -1,7 +1,10 @@
 {
   "projectId": "0f7d19c2-edfe-42cc-97bf-8b2cfb7a2bc5",
-  "buildCommand": "npm run build",
+  "rootDirectory": "frontend",
+  "buildCommand": "bun run build",
+  "installCommand": "bun install",
   "outputDirectory": "dist",
+  "framework": "vite",
   "nodeVersion": "20.x",
   "env": [
     {
@@ -24,6 +27,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://ai-ngfw-backend.hf.space/api/:path*"
+    },
+    {
+      "source": "/((?!api/.*).*)",
+      "destination": "/index.html"
     }
   ]
 }
