@@ -12,6 +12,7 @@ from sqlalchemy import (
     Enum,
     ForeignKey,
     JSON,
+    Table,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -35,6 +36,16 @@ class IncidentStatus(str, enum.Enum):
     IN_PROGRESS = "in_progress"
     RESOLVED = "resolved"
     CLOSED = "closed"
+
+
+# Association table for incident-threat M2M relationship
+# Must be defined BEFORE Threat and Incident models that reference it
+incident_threats = Table(
+    "incident_threats",
+    Base.metadata,
+    Column("incident_id", Integer, ForeignKey("incidents.id")),
+    Column("threat_id", Integer, ForeignKey("threats.id")),
+)
 
 
 class User(Base):
@@ -184,7 +195,8 @@ class Threat(Base):
 
     # Relationships
     traffic_flow = relationship("TrafficFlow", back_populates="threats")
-    incidents = relationship("Incident", back_populates="threats")
+    # M2M with Incident via association table — no direct FK between threats/incidents
+    incidents = relationship("Incident", secondary=incident_threats, back_populates="threats")
 
 
 class Incident(Base):
@@ -207,7 +219,7 @@ class Incident(Base):
     remediation_steps = Column(JSON, nullable=True)
 
     # Relationships
-    threats = relationship("Threat", secondary="incident_threats")
+    threats = relationship("Threat", secondary=incident_threats, back_populates="incidents")
     assignee = relationship("User", back_populates="incidents")
 
 
@@ -278,14 +290,3 @@ class AnalyticsEvent(Base):
     event_type = Column(String, index=True)
     event_data = Column(JSON)
     timestamp = Column(DateTime, index=True, server_default=func.now())
-
-
-# Association table for incident-threat relationship
-from sqlalchemy import Table
-
-incident_threats = Table(
-    "incident_threats",
-    Base.metadata,
-    Column("incident_id", Integer, ForeignKey("incidents.id")),
-    Column("threat_id", Integer, ForeignKey("threats.id")),
-)
