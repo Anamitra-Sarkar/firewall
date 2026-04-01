@@ -1,13 +1,13 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import HexGridCanvas from './HexGridCanvas';
+import NeuralFlowCanvas from './NeuralFlowCanvas';
 
 export default function Layout() {
   return (
     <div className="flex h-screen" style={{ background: '#f8fafc', position: 'relative' }}>
-      {/* Animated hex-grid background */}
-      <HexGridCanvas />
+      {/* Neural flow background */}
+      <NeuralFlowCanvas />
 
       {/* Sidebar */}
       <div style={{ position: 'relative', zIndex: 1, flexShrink: 0 }}>

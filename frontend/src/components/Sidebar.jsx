@@ -64,7 +64,7 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const location  = useLocation();
+  const location     = useLocation();
   const sidebarOpen  = useAppStore((s) => s.sidebarOpen);
   const toggleSidebar = useAppStore((s) => s.toggleSidebar);
 
@@ -73,12 +73,11 @@ export default function Sidebar() {
       style={{
         width: sidebarOpen ? 220 : 68,
         transition: 'width 0.3s cubic-bezier(0.16,1,0.3,1)',
-        background: 'rgba(255,255,255,0.88)',
+        background: 'rgba(255,255,255,0.92)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
         borderRight: '1px solid rgba(226,232,240,0.9)',
-        display: 'flex',
-        flexDirection: 'column',
+        display: 'flex', flexDirection: 'column',
         height: '100%',
         boxShadow: '2px 0 16px rgba(6,182,212,0.06)',
         overflow: 'hidden',
@@ -106,14 +105,9 @@ export default function Sidebar() {
         <button
           onClick={toggleSidebar}
           style={{
-            padding: '6px',
-            borderRadius: 8,
-            border: 'none',
-            background: 'transparent',
-            color: '#64748b',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
+            padding: '6px', borderRadius: 8, border: 'none',
+            background: 'transparent', color: '#64748b',
+            cursor: 'pointer', display: 'flex', alignItems: 'center',
             transition: 'background 0.18s',
           }}
           onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
@@ -136,33 +130,23 @@ export default function Sidebar() {
               key={item.path}
               to={item.path}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
+                display: 'flex', alignItems: 'center', gap: 10,
                 padding: sidebarOpen ? '10px 14px' : '10px 0',
                 justifyContent: sidebarOpen ? 'flex-start' : 'center',
-                borderRadius: 10,
-                textDecoration: 'none',
+                borderRadius: 10, textDecoration: 'none',
                 fontWeight: active ? 700 : 500,
                 fontSize: 13.5,
                 color: active ? '#0891b2' : '#475569',
                 background: active ? 'rgba(6,182,212,0.10)' : 'transparent',
-                transition: 'all 0.18s',
-                position: 'relative',
+                transition: 'all 0.18s', position: 'relative',
               }}
-              onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#f8fafc'; }}
+              onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#f1f5f9'; }}
               onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
             >
-              {/* Active indicator bar */}
               {active && (
                 <span style={{
-                  position: 'absolute',
-                  left: 0,
-                  top: '20%',
-                  height: '60%',
-                  width: 3,
-                  borderRadius: 2,
-                  background: '#06b6d4',
+                  position: 'absolute', left: 0, top: '20%',
+                  height: '60%', width: 3, borderRadius: 2, background: '#06b6d4',
                 }}/>
               )}
               <span style={{ color: active ? '#06b6d4' : '#94a3b8', flexShrink: 0 }}>{item.icon}</span>
@@ -172,21 +156,18 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Footer status */}
+      {/* Footer */}
       <div style={{
         borderTop: '1px solid rgba(226,232,240,0.8)',
         padding: '14px 16px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
+        display: 'flex', alignItems: 'center', gap: 8,
         justifyContent: sidebarOpen ? 'flex-start' : 'center',
       }}>
         <span style={{
-          width: 8, height: 8,
-          borderRadius: '50%',
+          width: 8, height: 8, borderRadius: '50%',
           background: '#22c55e',
           boxShadow: '0 0 6px rgba(34,197,94,0.7)',
-          flexShrink: 0,
+          flexShrink: 0, display: 'inline-block',
         }}/>
         {sidebarOpen && (
           <span style={{ fontSize: 11, color: '#64748b', fontWeight: 500 }}>Online · v0.1.0</span>
