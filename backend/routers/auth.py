@@ -41,6 +41,10 @@ class TokenResponse(BaseModel):
     username: str
 
 
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
+
+
 class UserResponse(BaseModel):
     id: int
     username: str
@@ -127,7 +131,7 @@ async def register(request: RegisterRequest, response: Response, db: AsyncSessio
         "refresh_token",
         refresh_token,
         httponly=True,
-        secure=True,  # In prod, set True for HTTPS only
+        secure=True,
         samesite="lax",
         max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
     )
@@ -142,28 +146,23 @@ async def register(request: RegisterRequest, response: Response, db: AsyncSessio
 @router.post("/login", response_model=TokenResponse)
 async def login(request: LoginRequest, response: Response, db: AsyncSession = Depends(get_db)):
     """Login with username/password"""
-    # Find user
     result = await db.execute(select(User).filter(User.username == request.username))
     user = result.scalars().first()
     
     if not user or not verify_password(request.password, user.hashed_password):
-        # Generic error to prevent enumeration
         raise HTTPException(status_code=401, detail="Invalid username or password")
     
-    # Update last login
     user.last_login = datetime.utcnow()
     await db.commit()
     
-    # Create tokens
     access_token = create_access_token(user.id, user.username)
     refresh_token = create_refresh_token(user.id)
     
-    # Set refresh token in httpOnly cookie
     response.set_cookie(
         "refresh_token",
         refresh_token,
         httponly=True,
-        secure=True,  # In prod, set True for HTTPS only
+        secure=True,
         samesite="lax",
         max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
     )
@@ -176,7 +175,7 @@ async def login(request: LoginRequest, response: Response, db: AsyncSession = De
 
 
 @router.post("/refresh", response_model=TokenResponse)
-async def refresh_token(request: "RefreshTokenRequest", db: AsyncSession = Depends(get_db)):
+async def refresh_token(request: RefreshTokenRequest, db: AsyncSession = Depends(get_db)):
     """Refresh access token using refresh token"""
     try:
         payload = jwt.decode(request.refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -234,7 +233,6 @@ async def get_extension_token(user: User = Depends(get_current_user)):
         return {"token": None, "masked": None}
     
     token = user.extension_token
-    # Mask token: show first 6 and last 3 chars
     masked = token[:6] + "..." + token[-3:] if len(token) > 9 else "***"
     
     return {"token": token, "masked": masked}
@@ -250,7 +248,6 @@ async def regenerate_extension_token(
     if not verify_password(password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid password")
     
-    # Generate new token
     user.extension_token = f"ngfw_{uuid.uuid4().hex[:20]}"
     await db.commit()
     await db.refresh(user)
@@ -260,8 +257,3 @@ async def regenerate_extension_token(
         "token": user.extension_token,
         "masked": user.extension_token[:6] + "..." + user.extension_token[-3:]
     }
-
-
-# Add RefreshTokenRequest model after other models
-class RefreshTokenRequest(BaseModel):
-    refresh_token: str
