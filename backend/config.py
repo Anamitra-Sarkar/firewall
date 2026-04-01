@@ -42,6 +42,9 @@ class Settings(BaseSettings):
     # Environment
     environment: str = "development"
     
+    # Frontend
+    frontend_url: Optional[str] = None
+    
     class Config:
         env_file = ".env"
         case_sensitive = False
@@ -75,5 +78,3 @@ if os.getenv("ENVIRONMENT"):
     settings.environment = os.getenv("ENVIRONMENT")
 if os.getenv("SECRET_KEY"):
     settings.secret_key = os.getenv("SECRET_KEY")
-if os.getenv("FRONTEND_URL"):
-    settings.frontend_url = os.getenv("FRONTEND_URL")
